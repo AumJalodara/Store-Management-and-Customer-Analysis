@@ -1,0 +1,25 @@
+Categories found: [
+  { id: 1, name: 'Groceries' },
+  { id: 2, name: 'Beverages' },
+  { id: 3, name: 'Dairy' },
+  { id: 4, name: 'Snacks' },
+  { id: 5, name: 'Personal Care' },
+  { id: 6, name: 'Electronics' }
+]
+Updated Basmati Rice 5kg -> Groceries (ID: 1)
+Updated Toor Dal 1kg -> Groceries (ID: 1)
+Updated Alphonso Mango Pulp -> Groceries (ID: 1)
+Updated iphone17 pro -> Groceries (ID: 1)
+Updated Mango Juice 1L -> Beverages (ID: 2)
+Updated Cold Coffee 500ml -> Beverages (ID: 2)
+Updated Hot Chocolate Mix -> Beverages (ID: 2)
+Updated Full Cream Milk 1L -> Dairy (ID: 3)
+Updated Paneer 200g -> Dairy (ID: 3)
+Updated Lays Chips 60g -> Snacks (ID: 4)
+Updated Kurkure 100g -> Snacks (ID: 4)
+Updated Shampoo 200ml -> Personal Care (ID: 5)
+Updated Soap 3-pack -> Personal Care (ID: 5)
+Updated Sunscreen SPF50 -> Personal Care (ID: 5)
+Updated Pen -> Personal Care (ID: 5)
+Updated USB Cable 1m -> Electronics (ID: 6)
+Updated Earphones -> Electronics (ID: 6)

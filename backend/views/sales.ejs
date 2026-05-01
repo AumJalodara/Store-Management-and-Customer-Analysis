@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0a0a, #111827, #1f2937) fixed;
+      color: #fff;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent);
+      filter: blur(100px);
+      z-index: -1;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03) !important;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 10px 40px rgba(79, 70, 229, 0.3) !important;
+    }
+    .table-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .table {
+      color: #ccc;
+      --bs-table-bg: transparent;
+      margin-bottom: 0;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(79,70,229,0.1);
+      color: #fff;
+    }
+    .table-light {
+      background-color: #1a1a1a !important;
+      color: #aaa;
+    }
+    .table-light th {
+      background-color: #1a1a1a !important;
+      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      color: #aaa;
+    }
+    td, th {
+      border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    }
+    .total-col {
+      font-weight: bold;
+      color: #10b981;
+    }
+    .error-msg {
+      color: #ef4444;
+      font-weight: bold;
+      text-align: center;
+      margin: 15px 0;
+    }
+    .no-data {
+      text-align: center;
+      font-style: italic;
+      color: #aaa;
+      padding: 30px;
+    }
+    .nav-tabs {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 30px;
+    }
+    .nav-link {
+      color: #aaa;
+    }
+    .nav-link:hover {
+      color: #fff;
+      border-color: transparent transparent rgba(255,255,255,0.1) transparent;
+    }
+    .nav-link.active {
+      background: transparent !important;
+      color: #4f46e5 !important;
+      border-color: transparent transparent #4f46e5 transparent !important;
+      border-bottom-width: 2px !important;
+    }
+  </style>
+</head>
+<body>
+
+<ul class="nav nav-tabs px-4 pt-3">
+  <li class="nav-item"><a class="nav-link fw-bold" href="/dashboard">Dashboard</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/products">Products</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/revenue-dashboard">Revenue</a></li>
+  <li class="nav-item"><a class="nav-link active fw-bold" href="/sales">Sales Data</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/customers">Customers</a></li>
+</ul>
+
+<div class="container mt-4 table-container">
+  <h2 class="fw-bold mb-4 text-center text-white">Product Sales Summary</h2>
+
+  <div class="card overflow-hidden">
+    <div class="card-body p-0">
+      <% if (error) { %>
+        <div class="error-msg"><%= error %></div>
+      <% } %>
+
+      <% if (sales && sales.length > 0) { %>
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-4 py-3">Product Name</th>
+              <th class="text-end pe-4 py-3">Total Sold</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% sales.forEach(function(item) { %>
+              <tr>
+                <td class="ps-4 fw-semibold text-white"><%= item.product_name %></td>
+                <td class="text-end pe-4 total-col"><%= item.total_sold %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <div class="no-data">
+          <p>No sales data available yet.</p>
+          <p><i>Hint: Please run your database seeder or insert data.</i></p>
+          <div class="text-start bg-dark p-3 rounded mt-3" style="font-family: monospace; font-size:13px; overflow-x:auto;">
+<pre class="m-0 text-success">INSERT INTO sales (customer_id, store_id, product_id, quantity, unit_price, total_amount) VALUES
+(1, 1, 1, 2, 899.99, 1799.98),
+(2, 2, 2, 3, 1099.99, 3299.97),
+(1, 3, 3, 1, 349.99, 349.99);</pre>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

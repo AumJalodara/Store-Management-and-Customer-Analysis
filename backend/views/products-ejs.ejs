@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products Inventory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0a0a, #111827, #1f2937) fixed;
+      color: #fff;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent);
+      filter: blur(100px);
+      z-index: -1;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03) !important;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 10px 40px rgba(79, 70, 229, 0.3) !important;
+    }
+    .table {
+      color: #ccc;
+      --bs-table-bg: transparent;
+      margin-bottom: 0;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(79,70,229,0.1);
+      color: #fff;
+    }
+    .table-light {
+      background-color: #1a1a1a !important;
+      color: #aaa;
+    }
+    .table-light th {
+      background-color: #1a1a1a !important;
+      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      color: #aaa;
+    }
+    td, th {
+      border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    }
+    .badge {
+      background: rgba(79,70,229,0.2) !important;
+      color: #818cf8 !important;
+      border-color: rgba(79,70,229,0.4) !important;
+    }
+    .btn-outline-secondary {
+      color: #aaa;
+      border-color: rgba(255,255,255,0.2);
+    }
+    .btn-outline-secondary:hover {
+      background-color: #4f46e5;
+      border-color: #4f46e5;
+      color: #fff;
+    }
+    .nav-tabs {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 30px;
+    }
+    .nav-link {
+      color: #aaa;
+    }
+    .nav-link:hover {
+      color: #fff;
+      border-color: transparent transparent rgba(255,255,255,0.1) transparent;
+    }
+    .nav-link.active {
+      background: transparent !important;
+      color: #4f46e5 !important;
+      border-color: transparent transparent #4f46e5 transparent !important;
+      border-bottom-width: 2px !important;
+    }
+  </style>
+</head>
+<body>
+
+<ul class="nav nav-tabs px-4 pt-3">
+  <li class="nav-item"><a class="nav-link fw-bold" href="/dashboard">Dashboard</a></li>
+  <li class="nav-item"><a class="nav-link active fw-bold" href="/products">Products</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/revenue-dashboard">Revenue</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/sales">Sales Data</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/customers">Customers</a></li>
+</ul>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+    <h2 class="fw-bold mb-0 text-white">Product Catalog</h2>
+    <a href="/dashboard-ejs" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+  </div>
+
+  <div class="card overflow-hidden">
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-4 py-3">Product Name</th>
+            <th class="py-3">Brand</th>
+            <th class="py-3">Category</th>
+            <th class="py-3">Price</th>
+            <th class="text-end pe-4 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (products && products.length > 0) { %>
+            <% products.forEach(function(product) { %>
+              <tr>
+                <td class="ps-4 fw-semibold text-white"><%= product.name %></td>
+                <td><%= product.brand || '—' %></td>
+                <td>
+                  <span class="badge border rounded-pill px-3 py-2">
+                    <%= product.category %>
+                  </span>
+                </td>
+                <td class="text-white">₹<%= Number(product.price).toLocaleString('en-IN') %></td>
+                <td class="text-end pe-4">
+                   <button class="btn btn-link btn-sm" style="color:#818cf8;"><i class="bi bi-pencil-square"></i></button>
+                   <button class="btn btn-link btn-sm text-danger"><i class="bi bi-trash"></i></button>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="5" class="text-center py-5 text-secondary fst-italic">No products found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

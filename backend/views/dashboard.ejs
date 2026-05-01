@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0a0a, #111827, #1f2937) fixed;
+      color: #fff;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent);
+      filter: blur(100px);
+      z-index: -1;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03) !important;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 10px 40px rgba(79, 70, 229, 0.3) !important;
+    }
+    .text-secondary {
+      color: #aaa !important;
+    }
+    .display-5 {
+      color: #fff;
+    }
+    /* Adapting neon colors instead of bootstrap bg-orange-subtle */
+    .icon-box-orange {
+      background: rgba(249, 115, 22, 0.2) !important;
+      border-radius: 16px;
+      padding: 1rem;
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+    }
+    .icon-box-green {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border-radius: 16px;
+      padding: 1rem;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+    .nav-tabs {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 30px;
+    }
+    .nav-link {
+      color: #aaa;
+    }
+    .nav-link:hover {
+      color: #fff;
+      border-color: transparent transparent rgba(255,255,255,0.1) transparent;
+    }
+    .nav-link.active {
+      background: transparent !important;
+      color: #4f46e5 !important;
+      border-color: transparent transparent #4f46e5 transparent !important;
+      border-bottom-width: 2px !important;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Basic Top Nav for Navigation context -->
+<ul class="nav nav-tabs px-4 pt-3">
+  <li class="nav-item"><a class="nav-link active fw-bold" href="/dashboard">Dashboard</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/products">Products</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/revenue-dashboard">Revenue</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/sales">Sales Data</a></li>
+  <li class="nav-item"><a class="nav-link fw-bold" href="/customers">Customers</a></li>
+</ul>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold m-0">Overview Dashboard</h2>
+    <div class="d-flex gap-2">
+       <a href="/customers/add" class="btn btn-outline-primary rounded-pill px-4"><i class="bi bi-person-plus me-2"></i>Add Customer</a>
+    </div>
+  </div>
+  <div class="row">
+    <!-- Low Stock Items -->
+    <div class="col-md-4 mb-4">
+      <div class="card overflow-hidden h-100">
+        <div class="card-body p-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <p class="text-secondary fw-semibold text-uppercase small mb-1">Low Stock Items</p>
+              <h1 class="display-5 fw-bold mb-0"><%= lowStock %></h1>
+              
+              <div class="mt-3">
+                <% if (lowStock > 0) { %>
+                  <span class="badge bg-danger text-white border border-danger rounded-pill px-3 py-2 shadow" style="box-shadow: 0 0 10px rgba(220,53,69,0.5) !important;">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Restock required
+                  </span>
+                <% } else { %>
+                  <span class="badge bg-success text-white border border-success rounded-pill px-3 py-2 shadow" style="box-shadow: 0 0 10px rgba(25,135,84,0.5) !important;">
+                    <i class="bi bi-check-circle-fill me-1"></i> All good
+                  </span>
+                <% } %>
+              </div>
+            </div>
+            <div class="icon-box-orange">
+              <i class="bi bi-box-seam fs-2" style="color: #f97316; text-shadow: 0 0 10px #f97316;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sales Today Card -->
+    <div class="col-md-4 mb-4">
+      <div class="card overflow-hidden h-100">
+        <div class="card-body p-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <p class="text-secondary fw-semibold text-uppercase small mb-1">Sales Today</p>
+              <h1 class="display-5 fw-bold mb-0">₹<%= Number(salesToday).toLocaleString('en-IN') %></h1>
+              
+              <div class="mt-3 text-success small fw-bold" style="color: #10b981 !important; text-shadow: 0 0 5px rgba(16,185,129,0.5);">
+                <i class="bi bi-graph-up-arrow me-1"></i> Real-time updates
+              </div>
+            </div>
+            <div class="icon-box-green">
+              <i class="bi bi-cart-check-fill fs-2" style="color: #10b981; text-shadow: 0 0 10px #10b981;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

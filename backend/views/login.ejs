@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Store Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0a0a0a, #111827, #1f2937);
+      background-attachment: fixed;
+      color: #fff;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent);
+      filter: blur(100px);
+      z-index: 1;
+    }
+
+    .login-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: rgba(15, 15, 25, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+      animation: cardEntrance 0.8s ease-out;
+    }
+
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .form-label {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #fff;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #4f46e5;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.3);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(79, 70, 229, 0.5);
+    }
+
+    .brand-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .brand-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      font-size: 24px;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+    }
+
+    .alert {
+      border-radius: 12px;
+      font-size: 0.9rem;
+      border: none;
+      background: rgba(220, 53, 69, 0.2);
+      color: #ff6b6b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="brand-section">
+        <div class="brand-icon">
+          <i class="bi bi-shop"></i>
+        </div>
+        <h3 class="fw-black text-white m-0 tracking-tighter uppercase">SmartStore</h3>
+        <p class="text-white-50 small mt-1">Management System v2.0</p>
+      </div>
+      
+      <% if (error) { %>
+        <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i><%= error %></div>
+      <% } %>
+
+      <form action="/api/auth/login" method="POST">
+        <div class="mb-4">
+          <label class="form-label">Access Email</label>
+          <input type="email" name="email" class="form-control" required placeholder="admin@smartstore.com">
+        </div>
+        <div class="mb-5">
+          <label class="form-label">Secure Password</label>
+          <input type="password" name="password" class="form-control" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">
+          Authorize Access <i class="bi bi-shield-lock ms-2"></i>
+        </button>
+      </form>
+      
+      <div class="text-center mt-4">
+        <a href="#" class="text-white-50 text-decoration-none small hover-white">Forgot credentials?</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
