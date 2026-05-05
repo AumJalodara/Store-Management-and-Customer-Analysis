@@ -1,5 +1,26 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
+build/
+
+# Environment variables
 .env
+
+# Logs
 *.log
-backend/*.txt
+
+# Debug / temp files
+*.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Optional: lock files (keep if you want reproducibility)
+# package-lock.json
