@@ -22,10 +22,10 @@ const fmt = (n) => Number(n || 0).toLocaleString('en-IN');
 const ChartTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 shadow-2xl text-sm">
+    <div className="chart-tooltip-glass text-sm">
       <p className="font-semibold text-white mb-1">{label}</p>
       {payload.map((p, i) => (
-        <p key={i} style={{ color: p.color }} className="font-medium">
+        <p key={i} style={{ color: p.color || '#fff' }} className="font-medium drop-shadow-md">
           {p.name === 'revenue' ? fmtRupeeShort(p.value) : `${p.name}: ${p.value}`}
         </p>
       ))}
@@ -82,19 +82,79 @@ export default function DashboardPage() {
           {loading ? (
             <div className="h-64 animate-pulse bg-white/5 rounded-xl" />
           ) : (
-            <div className="h-64 mt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data?.topProducts || []} layout="vertical" margin={{ left: 20, right: 30 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
-                  <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category"
-                    axisLine={false} tickLine={false}
-                    tick={{ fontSize: 13, fill: '#aaa', fontWeight: 600 }} width={120} />
-                  <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                  <Bar dataKey="units_sold" name="units sold" fill="#4f46e5" radius={[0,6,6,0]} barSize={25} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+              <div className="w-full mt-6 space-y-2.5 pb-2">
+                {/* Table Header */}
+                <div className="flex items-center justify-between text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] px-5 pb-3 border-b border-white/5">
+                  <div className="flex items-center gap-6 w-1/3">
+                    <span className="w-8 text-center">Rank</span>
+                    <span>Product Name</span>
+                  </div>
+                  <span className="flex-1">Popularity Metrics</span>
+                  <span className="w-24 text-right">Units</span>
+                </div>
+                
+                {/* Ranked List */}
+                {(() => {
+                  const topProductsList = [...(data?.topProducts || [])].sort((a,b) => (Number(b.units_sold) || 0) - (Number(a.units_sold) || 0));
+                  const maxUnits = topProductsList.length > 0 
+                    ? Math.max(...topProductsList.map(p => Number(p.units_sold) || 0)) 
+                    : 1;
+                    
+                  return topProductsList.map((product, i) => {
+                    const val = Number(product.units_sold) || 0;
+                    const widthPercent = Math.min((val / maxUnits) * 100, 100);
+                    const isTop = i === 0;
+                    
+                    return (
+                      <motion.div 
+                        key={product.name || i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.45 + i * 0.05 }}
+                        className={`flex items-center justify-between px-5 py-4 bg-white/[0.015] border rounded-2xl transition-all duration-300 group
+                          ${isTop ? 'border-indigo-500/30 shadow-[0_0_20px_rgba(79,70,229,0.1)] hover:bg-white/[0.04]' : 'border-white/5 hover:bg-white/[0.03]'}`}
+                      >
+                        {/* Rank & Name */}
+                        <div className="flex items-center gap-6 w-1/3">
+                          <span className={`w-8 text-center text-xl font-black transition-colors duration-300
+                            ${isTop ? 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.8)]' : 'text-gray-600 group-hover:text-gray-400'}`}>
+                            {String(i + 1).padStart(2, '0')}
+                          </span>
+                          <div className="flex flex-col">
+                            <p className={`text-sm font-bold transition-colors duration-300 ${isTop ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
+                              {product.name}
+                            </p>
+                            {isTop && <span className="text-[9px] text-indigo-400 font-bold uppercase tracking-widest mt-0.5">Top Performer</span>}
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="flex-1 mx-8 flex items-center">
+                          <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden relative">
+                             <motion.div 
+                               initial={{ width: 0 }}
+                               animate={{ width: `${widthPercent}%` }}
+                               transition={{ duration: 1.2, delay: 0.5 + i * 0.1, ease: 'easeOut' }}
+                               className={`absolute left-0 top-0 bottom-0 rounded-full bg-gradient-to-r shadow-[0_0_12px_rgba(129,140,248,0.5)]
+                                  ${isTop ? 'from-purple-600 to-indigo-400' : 'from-indigo-600/60 to-purple-500/80'}`}
+                             />
+                          </div>
+                        </div>
+
+                        {/* Value Status */}
+                        <div className="w-24 text-right flex flex-col justify-center">
+                           <span className={`text-base font-black transition-colors duration-300 ${isTop ? 'text-indigo-300 drop-shadow-sm' : 'text-gray-200 group-hover:text-white'}`}>
+                             {val.toLocaleString()}
+                           </span>
+                           <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mt-0.5">
+                             Sold
+                           </span>
+                        </div>
+                      </motion.div>
+                    );
+                  });
+                })()}
+              </div>
           )}
         </SectionCard>
       </div>

@@ -19,6 +19,11 @@ export default function AddCustomerPage({ onBack }) {
     setError(null);
 
     // Manual Validation
+    if (!formData.name.trim() || !/^[a-zA-Z]+$/.test(formData.name)) {
+      setError('Name must contain only letters');
+      setLoading(false);
+      return;
+    }
     if (!formData.email.toLowerCase().endsWith('@gmail.com')) {
       setError('Please use a valid @gmail.com address');
       setLoading(false);
@@ -44,7 +49,13 @@ export default function AddCustomerPage({ onBack }) {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+    if (name === 'name') {
+      value = value.replace(/[^a-zA-Z]/g, '');
+    } else if (name === 'phone') {
+      value = value.replace(/\D/g, '').slice(0, 10);
+    }
+    setFormData({ ...formData, [name]: value });
   };
 
   return (

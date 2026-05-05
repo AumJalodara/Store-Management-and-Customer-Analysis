@@ -12,7 +12,7 @@ import { fmtRupee } from '../utils/format';
 
 const EMPTY_FORM = {
   name: '', category_id: '', brand: '', price: '',
-  discounted_price: '', seasonal_flag: false, reorder_level: 10,
+  discounted_price: '', seasonal_flag: false, reorder_level: 10, unit: '',
 };
 
 // ── Product Modal ─────────────────────────────────────────────────────────────
@@ -28,12 +28,17 @@ function ProductModal({ mode, product, onClose, onSaved, toast }) {
     const e = {};
     if (!form.name.trim())        e.name  = 'Product name is required';
     if (!form.price || form.price <= 0) e.price = 'Valid price is required';
+    if (form.brand && !/^[a-zA-Z]+$/.test(form.brand)) e.brand = 'Brand must contain only letters';
     return e;
   };
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+    let finalValue = type === 'checkbox' ? checked : value;
+    if (name === 'brand') {
+      finalValue = finalValue.replace(/[^a-zA-Z]/g, '');
+    }
+    setForm(f => ({ ...f, [name]: finalValue }));
     if (errors[name]) setErrors(er => ({ ...er, [name]: '' }));
   };
 
@@ -108,6 +113,7 @@ function ProductModal({ mode, product, onClose, onSaved, toast }) {
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Brand</label>
               <input name="brand" value={form.brand} onChange={handleChange}
                 placeholder="e.g. Samsung" className={inputCls('brand')} />
+              {errors.brand && <p className="text-xs text-red-500 mt-1">{errors.brand}</p>}
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Category ID</label>
@@ -134,11 +140,16 @@ function ProductModal({ mode, product, onClose, onSaved, toast }) {
           </div>
 
           {/* Reorder level + Seasonal */}
-          <div className="grid grid-cols-2 gap-3 items-end">
+          <div className="grid grid-cols-3 gap-3 items-end">
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Reorder Level</label>
               <input name="reorder_level" type="number" min="0" value={form.reorder_level} onChange={handleChange}
                 placeholder="e.g. 10" className={inputCls('reorder_level')} />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">UNIT</label>
+              <input name="unit" value={form.unit || ''} onChange={handleChange}
+                placeholder="e.g. pcs, kg, litre" className={inputCls('unit')} />
             </div>
             <div className="pb-1">
               <label className="flex items-center gap-2.5 cursor-pointer select-none">

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Store, Mail, Lock, Eye, EyeOff, LogIn, ArrowRight } from 'lucide-react';
+import { Store, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
@@ -10,11 +9,15 @@ export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
+  
+  // 'admin' or 'staff' or null
+  const [activeCard, setActiveCard] = useState(null);
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!activeCard) return;
     setError('');
     setLoading(true);
     try {
@@ -27,113 +30,159 @@ export default function LoginPage() {
     }
   };
 
-  const demoAccounts = [
-    { label: 'Admin',   email: 'admin@smartstore.com' },
-    { label: 'Staff',   email: 'staff@smartstore.com' },
-  ];
+  const handleCardClick = (type) => {
+    if (activeCard === type) return;
+    setActiveCard(type);
+    setError('');
+    if (type === 'admin') setForm({ email: 'admin@smartstore.com', password: 'password123' });
+    if (type === 'staff') setForm({ email: 'staff@smartstore.com', password: 'password123' });
+  };
 
-  return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111827] to-[#1f2937] overflow-hidden p-4">
-      
-      {/* Subtle Glow Layer */}
-      <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-purple-500/5 blur-[100px] rounded-full pointer-events-none" />
+  const renderCard = (type, title, subtitle) => {
+    const isActive = activeCard === type;
+    const isInactive = activeCard && activeCard !== type;
+    
+    // Default Isometric
+    let transform = 'rotateX(55deg) rotateZ(-20deg) scale(0.9)';
+    let zIndex = 10;
+    let opacity = 0.85;
+    
+    if (isActive) {
+      transform = 'rotateX(0deg) rotateZ(0deg) scale(1.05) translateY(-10px)';
+      zIndex = 20;
+      opacity = 1;
+    } else if (isInactive) {
+      // Push it lower and back
+      transform = 'rotateX(60deg) rotateZ(-25deg) scale(0.8) translateY(40px)';
+      opacity = 0.4;
+      zIndex = 0;
+    }
 
-      {/* Level 2: Centered Login Form - High-End Crystal Glass Circle */}
-      <motion.div
-         initial={{ opacity: 0, scale: 0.95, y: 20 }}
-         animate={{ opacity: 1, scale: 1, y: 0 }}
-         transition={{ type: "spring", stiffness: 100, damping: 20 }}
-         className="crystal-glass crystal-glass-circle max-w-lg w-full z-10 shadow-[0_0_80px_rgba(139,92,246,0.15)] ring-1 ring-white/5"
+    return (
+      <div 
+        onClick={(e) => {
+          e.stopPropagation();
+          handleCardClick(type);
+        }}
+        className={`relative transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer
+          w-full sm:w-[360px] bg-gradient-to-br from-[#1a1a2e]/90 to-[#0f172a]/90 
+          border border-white/10 rounded-3xl p-8 backdrop-blur-xl flex-shrink-0
+          ${!isActive && !isInactive ? 'hover:-translate-y-4 hover:translate-x-2' : ''}`}
+        style={{
+          transform,
+          zIndex,
+          opacity,
+          transformStyle: 'preserve-3d',
+          boxShadow: isActive 
+             ? '0 30px 60px rgba(139,92,246,0.3), inset 0 0 0 1px rgba(139,92,246,0.5)' 
+             : '-20px 30px 40px rgba(0,0,0,0.8)',
+        }}
       >
-        <div className="flex flex-col items-center text-center">
-          {/* Neon Logo Section */}
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 flex items-center justify-center border border-white/20 shadow-[0_0_25px_rgba(139,92,246,0.5)]">
-              <Store size={26} className="text-white drop-shadow-lg" />
-            </div>
-            <div className="flex flex-col items-start leading-none">
-              <span className="font-black text-2xl text-white tracking-widest uppercase">SmartStore</span>
-              <span className="text-[9px] font-black text-violet-400 uppercase tracking-[0.4em] mt-1 pl-0.5">Management</span>
-            </div>
+        <div className="flex items-center gap-3 mb-8">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-white/20 
+             ${type === 'admin' ? 'bg-gradient-to-br from-orange-500 to-red-600 shadow-[0_0_25px_rgba(249,115,22,0.4)]' : 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-[0_0_25px_rgba(99,102,241,0.4)]'}`}>
+             <Store size={26} className="text-white drop-shadow-lg" />
           </div>
+          <div>
+            <h2 className="font-black text-2xl text-white tracking-widest uppercase">{title}</h2>
+            <p className="text-[9px] font-black text-white/50 uppercase tracking-[0.4em] mt-1 pl-0.5">{subtitle}</p>
+          </div>
+        </div>
 
-          <h1 className="text-5xl font-black text-white mb-3 uppercase tracking-tighter drop-shadow-2xl">Login</h1>
-          <p className="text-indigo-200/40 text-[11px] font-bold mb-12 max-w-xs uppercase tracking-widest leading-relaxed">
-            Unleash your perspective.<br/>See the growth in Real-time.
-          </p>
+        {error && isActive && (
+          <div className="w-full mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[10px] text-red-500 font-black uppercase tracking-[0.1em]">
+            {error}
+          </div>
+        )}
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-              className="w-full mb-8 px-5 py-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-[10px] text-red-400 font-black uppercase tracking-[0.15em] backdrop-blur-sm"
-            >
-              {error}
-            </motion.div>
-          )}
-
-          <form onSubmit={handleSubmit} className="w-full space-y-6">
+        <div className={`transition-all duration-500 ${isActive ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
+          {/* Prevent form submission if not active */}
+          <form 
+            onSubmit={(e) => {
+              if(!isActive) { e.preventDefault(); return; }
+              handleSubmit(e);
+            }} 
+            className="w-full space-y-5"
+          >
             <div className="text-left">
-              <label className="block text-[10px] font-black text-indigo-300/50 uppercase tracking-[0.3em] mb-2.5 ml-2">Access Email</label>
+              <label className="block text-[10px] font-black text-indigo-300/50 uppercase tracking-[0.3em] mb-2.5 ml-1">Email</label>
               <div className="relative group">
-                <div className="absolute inset-0 bg-violet-600/10 rounded-2xl blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                <Mail size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-indigo-400/50 group-focus-within:text-violet-400 transition-colors" />
+                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400/50 group-focus-within:text-violet-400 transition-colors" />
                 <input
-                  type="email" name="email" required value={form.email} onChange={handleChange}
+                  type="email" name="email" required 
+                  value={isActive ? form.email : (type === 'admin' ? 'admin@smartstore.com' : 'staff@smartstore.com')} 
+                  onChange={handleChange}
                   placeholder="user@smartstore.com"
-                  className="relative w-full pl-14 pr-6 py-4.5 bg-white/[0.02] border border-white/10 rounded-2xl text-sm text-white focus:border-violet-500/50 focus:bg-white/[0.05] transition-all outline-none placeholder:text-indigo-100/10"
+                  tabIndex={isActive ? 0 : -1}
+                  className="w-full pl-12 pr-4 py-3.5 bg-white/[0.03] border border-white/10 rounded-xl text-sm text-white focus:border-violet-500/50 focus:bg-white/[0.06] transition-all outline-none"
                 />
               </div>
             </div>
 
             <div className="text-left">
-              <label className="block text-[10px] font-black text-indigo-300/50 uppercase tracking-[0.3em] mb-2.5 ml-2">Secure Code</label>
+              <label className="block text-[10px] font-black text-indigo-300/50 uppercase tracking-[0.3em] mb-2.5 ml-1">Password</label>
               <div className="relative group">
-                <div className="absolute inset-0 bg-violet-600/10 rounded-2xl blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
-                <Lock size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-indigo-400/50 group-focus-within:text-violet-400 transition-colors" />
+                <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400/50 group-focus-within:text-violet-400 transition-colors" />
                 <input
-                  type={showPwd ? 'text' : 'password'} name="password" required value={form.password} onChange={handleChange}
+                  type={showPwd ? 'text' : 'password'} name="password" required 
+                  value={isActive ? form.password : '••••••••'} 
+                  onChange={handleChange}
                   placeholder="••••••••"
-                  className="relative w-full pl-14 pr-14 py-4.5 bg-white/[0.02] border border-white/10 rounded-2xl text-sm text-white focus:border-violet-500/50 focus:bg-white/[0.05] transition-all outline-none placeholder:text-indigo-100/10"
+                  tabIndex={isActive ? 0 : -1}
+                  className="w-full pl-12 pr-12 py-3.5 bg-white/[0.03] border border-white/10 rounded-xl text-sm text-white focus:border-violet-500/50 focus:bg-white/[0.06] transition-all outline-none"
                 />
-                <button type="button" onClick={() => setShowPwd(s => !s)} className="absolute right-5 top-1/2 -translate-y-1/2 text-indigo-400/50 hover:text-white transition-colors">
+                <button 
+                  type="button" 
+                  tabIndex={isActive ? 0 : -1} 
+                  onClick={(e) => { e.preventDefault(); setShowPwd(s => !s); }} 
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400/50 hover:text-white transition-colors"
+                >
                   {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
             <button
-              type="submit" disabled={loading}
-              className="w-full py-5 rounded-2xl font-black text-xs text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-700 shadow-[0_15px_30px_rgba(79,70,229,0.4)] hover:shadow-[0_15px_40px_rgba(79,70,229,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all disabled:opacity-50 uppercase tracking-[0.3em]"
+              type="submit" disabled={loading || !isActive}
+              tabIndex={isActive ? 0 : -1}
+              className={`w-full mt-4 py-4 rounded-xl font-black text-xs text-white transition-all disabled:opacity-50 uppercase tracking-[0.2em]
+                ${type === 'admin' 
+                   ? 'bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_10px_20px_rgba(249,115,22,0.3)] hover:shadow-[0_10px_30px_rgba(249,115,22,0.5)]'
+                   : 'bg-gradient-to-r from-violet-600 to-indigo-600 shadow-[0_10px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_10px_30px_rgba(79,70,229,0.5)]'
+                }`}
             >
-              {loading ? "Authenticating..." : "System Access"}
+              {loading ? "Authenticating..." : "Login"}
             </button>
           </form>
-
-          {/* Quick Connect Demo */}
-          <div className="mt-12 flex flex-wrap justify-center gap-3">
-             {demoAccounts.map(acc => (
-               <button
-                 key={acc.email}
-                 onClick={() => setForm({ email: acc.email, password: 'password123' })}
-                 className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-indigo-300/40 hover:bg-white/10 hover:text-white hover:border-violet-500/50 transition-all flex items-center gap-2 group uppercase tracking-widest"
-               >
-                 {acc.label}
-                 <ArrowRight size={10} className="w-0 opacity-0 group-hover:w-3 group-hover:opacity-100 transition-all" />
-               </button>
-             ))}
-          </div>
-          
-          <div className="mt-14 flex gap-10 text-[9px] font-black text-indigo-300/30 uppercase tracking-[0.4em]">
-            <a href="#" className="hover:text-violet-400 transition-all">Recover</a>
-            <a href="#" className="hover:text-violet-400 transition-all">Register</a>
-          </div>
         </div>
-      </motion.div>
+      </div>
+    );
+  };
 
-      {/* Corporate Branding v2 */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[9px] text-indigo-300/20 font-black uppercase tracking-[0.6em] transition-opacity hover:opacity-100">
-        Engineered for Excellence — v2.0.4
+  return (
+    <div 
+      className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111827] to-[#1f2937] overflow-hidden p-4"
+      onClick={() => setActiveCard(null)}
+    >
+      {/* Background Ambience */}
+      <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
+      
+      <div className={`transition-all duration-700 z-10 text-center ${activeCard ? 'opacity-0 translate-y-[-20px] pointer-events-none' : 'opacity-100 mb-16'}`}>
+         <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-widest drop-shadow-lg">Select Portal</h1>
+         <p className="text-indigo-200/50 text-xs font-bold mt-3 uppercase tracking-[0.3em]">SmartStore 3D Authentication</p>
+      </div>
+
+      <div 
+        className="flex flex-col xl:flex-row items-center justify-center gap-12 xl:gap-24 w-full z-10"
+        style={{ perspective: '1200px' }}
+      >
+        {renderCard('admin', 'Admin', 'Full Access Control')}
+        {renderCard('staff', 'Staff', 'Store Operations')}
+      </div>
+      
+      <div className="absolute bottom-8 text-[9px] text-indigo-300/30 font-black uppercase tracking-[0.6em] pointer-events-none">
+        Engineered for Excellence
       </div>
     </div>
   );
